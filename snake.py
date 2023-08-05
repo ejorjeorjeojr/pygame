@@ -99,7 +99,7 @@ class Game():
         info = "Length"+str(length)+ "  "+"Speed:" + str(speed)
         font = pygame.font.Sysfont('FixedSys',30,False, False)
         text_obj = font.render(info,True,GRAY)
-        rext_rect = text_obj.get_rect()
+        text_rect = text_obj.get_rect()
         text_rect.x,text_rect.y = 10,10
         screen.blit(text_obj,text_rect)
 
