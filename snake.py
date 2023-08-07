@@ -1,4 +1,6 @@
 import pygame
+import os
+import sys
 import random
 from time import sleep
 SCREEN_WIDTH = 800
@@ -8,14 +10,15 @@ GRID_SIZE = 20
 GRID_WIDTH =  SCREEN_WIDTH/GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT/GRID_SIZE
 
-WHITE = (255,255,255)
-ORANGE = (250,150,0)
-GRAY = (100,100,100)
-
 UP = (0,-1)
 DOWN = (0,1)
 LEFT = (-1,0)
 RIGHT = (1,0)
+
+WHITE = (255,255,255)
+ORANGE = (250,150,0)
+GRAY = (100,100,100)
+
 
 class Snake():
     def __init__(self):
@@ -32,7 +35,7 @@ class Snake():
     def move(self):
         cur = self.positions[0]
         x, y = self.direction
-        new = (cur[0]+(x*GRID_SIZE), (cur[1]+(y*GRID_SIZE)))
+        new = (cur[0]+(x*GRID_SIZE)),(cur[1]+(y*GRID_SIZE))
 
         if new in self.positions[2:]:
             sleep(1)
@@ -48,21 +51,21 @@ class Snake():
     def eat(self):
         self.length+=1
     def draw(self,screen):
-        for p in self.positions:
-            rect = pygame.Rect((p[0],p[1], (GRID_SIZE,GRID_SIZE)))
+        for  p in self.positions:
+            rect = pygame.Rect((p[0],p[1]), (GRID_SIZE,GRID_SIZE))
             pygame.draw.rect(screen,GRAY,rect)
 
 class Feed():
     def __init__(self):
-        self.positions = (0,0)
+        self.position = (0,0)
         self.color = ORANGE
         self.create()
     def create(self):
         x = random.randint(0, GRID_WIDTH-1)
         y = random.randint(0,GRID_HEIGHT-1)
-        self.positions = x*GRID_SIZE, y*GRID_SIZE
+        self.position = x*GRID_SIZE, y*GRID_SIZE
     def draw(self, screen):
-        rect = pygame.Rect((self.positions[0],self.positions[1]),(GRID_SIZE,GRID_SIZE))
+        rect = pygame.Rect((self.position[0],self.position[1]),(GRID_SIZE,GRID_SIZE))
         pygame.draw.rect(screen,self.color,rect)
 
 class Game():
@@ -90,14 +93,14 @@ class Game():
         self.check_eat(self.snake,self.feed)
         self.speed = (10+self.snake.length)/2
     def check_eat(self,snake,feed):
-        if snake.positions[0] == feed.postion:
+        if snake.positions[0] == feed.position:
             snake.eat()
             feed.create()
 
 
     def draw_info(self,length,speed,screen):
         info = "Length"+str(length)+ "  "+"Speed:" + str(speed)
-        font = pygame.font.Sysfont('FixedSys',30,False, False)
+        font = pygame.font.SysFont('FixedSys',30,False, False)
         text_obj = font.render(info,True,GRAY)
         text_rect = text_obj.get_rect()
         text_rect.x,text_rect.y = 10,10
