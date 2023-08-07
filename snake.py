@@ -91,7 +91,7 @@ class Game():
     def run_logic(self):
         self.snake.move()
         self.check_eat(self.snake,self.feed)
-        self.speed = (10+self.snake.length)/2
+        self.speed = 10+self.snake.length*3
     def check_eat(self,snake,feed):
         if snake.positions[0] == feed.position:
             snake.eat()
