@@ -2,13 +2,15 @@ import pygame
 import os
 import random
 
-SCREEN_WIDTH = 900
+SCREEN_WIDTH = 2000
 SCREEN_HEIGHT = 700
 
 WHITE = (255,255,255)
 SEA = (80,180,220)
 GROUND = (140,120,40)
 DARK_GROUND = (70,60,20)
+RED = (250,0,0)
+
 
 current_path = os.path.dirname(__name__)
 assets_path = os.path.join(current_path, "assets")
@@ -33,7 +35,7 @@ class Fish():
         self.sound.play()
 
     def update(self):
-        self.dy +=0.5
+        self.dy +=0.5    
         self.rect.y += self.dy
 
         #물고기가 화면 위로 올라갔을 때
@@ -102,7 +104,7 @@ class Pipe():
         screen.blit(self.spipe, self.spipe_rect)
 class Game():
     def __init__(self):
-        pygame.mixer.music.load(os.path.join(assets_path, "bgm.mp3"))
+        pygame.mixer.music.load(os.path.join(assets_path, "99B2364C5DAFD85603.mp3"))
         self.font = pygame.font.SysFont("malgungothic", 40, True,False)
         self.fish = Fish()
         #파이프 한개가 아니라서..
@@ -111,7 +113,7 @@ class Game():
         self.pipes_pos = 0
         self.score = 0
         self.menu_on = True
-
+        self.highscore = 0
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -125,6 +127,7 @@ class Game():
                         self.fish.reset()
                         self.pipes = []
                         self.pipes.append(Pipe())
+                        
             else:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -137,6 +140,9 @@ class Game():
             if pipe.spipe_rect.x == self.pipes_pos:
                 self.pipes.append(Pipe())
                 self.score +=1
+                if self.score >= self.highscore:
+                    self.highscore = self.score
+
             if pipe.out_of_screen():
                 del self.pipes[0]
                 self.pipe_pos = random.randrange(200,400,4)
@@ -167,12 +173,13 @@ class Game():
         for pipe in self.pipes:
             pipe.update()
             pipe.draw(screen)
-        self.draw_text(screen, "점수:" +str(self.score),self.font,100,50,WHITE)
+        self.draw_text(screen, "점수:" +str(self.score),self.font,100,60,WHITE)
+        self.draw_text(screen, "최고 점수:" +str(self.highscore),self.font,100,20,RED)
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-    pygame.display.set_caption('날아라 물고기')
+    pygame.display.set_caption('우리 물고기가 ... 날아요!')
     clock = pygame.time.Clock()
     game = Game()
 
@@ -188,7 +195,7 @@ def main():
         
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(90)
     pygame.quit()
 
 main()
