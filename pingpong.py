@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import sys
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -17,24 +18,23 @@ assets_path = os.path.join(current_path, "assets")
 
 class Ball():
     def __init__(self,bounce_sound):
-        self.rect = pygame.Rect(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,12,12)
+        self.rect = pygame.Rect(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, 12,12)
         self.bounce_sound  = bounce_sound
         self.dx = 0
         self.dy = 5
     def update(self):
         self.rect.x +=self.dx
-        self.rect.y+=self.dy
+        self.rect.y += self.dy
         #왼쪽벽에 부딪힘
         if self.rect.left<0:
             self.dx*=-1
-            self.dx.left = 0
-            self.bounce_sound.play()
+            self.rect.left = 0
+            #self.bounce_sound.play()
         #오른쪽벽에 부딪힘
-        elif self.rect.right<0:
+        elif self.rect.right>0:
             self.dx*=-1
-            self.rect.right = SCREEN_WIDTH
-            self.bounce_sound.play()
-
+            self.rect.right = SCREEN_WIDTH-10
+            #self.bounce_sound.play()
     def reset(self,x,y):
         self.rect.x = x
         self.rect.y = y
@@ -54,9 +54,9 @@ class Player():
             self.dx = 0
         elif self.rect.right >= SCREEN_WIDTH and self.dx > 0:
             self.dx = 0
-#하이라이트!!!!!!!!!
+#하이라이트!!!!!!!!! 충돌 (충돌)
         if self.rect.colliderect(ball.rect):
-            ball.dz = random.randint(-5,5)
+            ball.dx = random.randrange(-5, 5)
             ball.dy *= -1
             ball.rect.bottom = self.rect.top
             self.ping_sound.play()
@@ -64,25 +64,25 @@ class Player():
         self.rect.x +=self.dx
 
     def draw(self,screen):
-        pygame.draw.rect(screen,RED,self.rect,0)
+        pygame.draw.rect(screen,RED,self.rect)
 
 class Enemy():
     def __init__(self,pong_sound):
-        self.rect = pygame.Rect(SCREEN_WIDTH//2,25,50,15)
+        self.rect = pygame.Rect(SCREEN_WIDTH//2, 25,50,15)
         self.pong_sound  = pong_sound
 #적보다 공이 왼쪽에 있을 때
     def update(self,ball):
         if self.rect.centerx > ball.rect.centerx:
-            diff = self.rect.centerx - ball.rect.conterx
+            diff = self.rect.centerx - ball.rect.centerx
             if diff<=4:
                 self.rect.centerx = ball.rect.centerx
             else:
                 self.rect.x -=4
 
         elif self.rect.centerx < ball.rect.centerx:
-            diff = ball.rect.centerx - self.rect.conterx
+            diff = ball.rect.centerx - self.rect.centerx
             if diff <= 4:
-                self.rect.conterx = ball.rect.conterx
+                self.rect.centerx = ball.rect.centerx
             else:
                 self.rect.x +=4
 #적이 공과 충돌했을 때
@@ -111,13 +111,13 @@ class Game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    self.player.dx = -5
+                    self.player.dx -=5
                 elif event.key == pygame.K_RIGHT:
-                    self.player.dx = 5
+                    self.player.dx += 5
             if event.type == pygame.KEYUP:
-                if event.keey == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     self.player.dx = 0
         return True
     def run_logic(self):
@@ -126,11 +126,11 @@ class Game():
         self.enemy.update(self.ball)
 
         #공이 위로 나간 경우(player 승)
-        if self.ball.rect.top[1]<0:
+        if self.ball.rect.top<0:
             self.player_score +=1
             self.ball.reset(self.player.rect.centerx, self.player.rect.centery)
         #공이 아래로 나간 경우(enemy 승)
-        if self.ball.rect.bottom[1]> SCREEN_HEIGHT:
+        if self.ball.rect.bottom> SCREEN_HEIGHT:
             self.enemy_score +=1
             self.ball.reset(self.enemy.rect.centerx, self.enemy.rect.centery)
 
@@ -161,15 +161,12 @@ class Game():
             self.enemy.draw(screen)
 
             for x in range(0, SCREEN_WIDTH,24):
-                pygame.draw.rect(screen,WHITE, [x, SCREEN_HEIGHT//2], 10,10)
+                pygame.draw.rect(screen,WHITE, [x, SCREEN_HEIGHT//2, 10,10])
 
             enemy_score_label = self.font.render(str(self.enemy_score),True,WHITE)
             screen.blit(enemy_score_label,(10,260))
             player_score_label = self.font.render(str(self.player_score),True,WHITE)
             screen.blit(player_score_label,(10,340))
-
-
-
 
 def main():
     pygame.init()
@@ -188,6 +185,5 @@ def main():
         clock.tick(60)
     pygame.quit()
 
-    if __name__ == "__main__":
-        main()
-    
+if __name__ == "__main__":
+    main()
