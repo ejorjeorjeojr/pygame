@@ -2,7 +2,7 @@ import pygame
 import os
 import random
 
-SCREEN_WIDTH = 2000
+SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 700
 
 WHITE = (255,255,255)

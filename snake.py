@@ -72,7 +72,7 @@ class Game():
     def __init__(self):
         self.snake = Snake()
         self.feed = Feed()
-        self.speed = 5
+        self.speed = 3
     def process_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
